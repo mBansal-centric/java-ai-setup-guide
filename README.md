@@ -30,6 +30,10 @@ Developers must manually download them and place them in the correct directories
 	   ```
 2. **google-java-format JAR** (used by Spotless CLI)  
 	Download google-java-format.jar: https://github.com/google/google-java-format/releases  
+	   <!-- Use the version that support your Java version:
+               - Java 17 → google-java-format 1.17.0
+               - Java 21+ → latest release (2.x or newer)
+          -->
 	Save as:  
 	   ```
 	   tools/spotless/google-java-format.jar
@@ -48,6 +52,28 @@ Developers must manually download them and place them in the correct directories
 
 ---
 
+## 🤖 Recommended AI Models for This Ecosystem
+
+This Java ecosystem is **tested, and verified** with the following AI models:
+
+### ⭐ Best Overall — **Claude Sonnet 4.5 (Highly Recommended)**
+- Exceptional adherence to rules, configs, and multi-file merges  
+- Safest behavior for editing existing code  
+- Strongest at respecting `CONFIGURATION.md` and `SETUP_STEPS.md`  
+- Best performance with long context and tool instructions  
+
+### ✔ Fully Compatible
+- GitHub Copilot Chat (VS Code / IntelliJ)
+
+### ⚠ Not Recommended for Setup Steps
+- Models with limited context  
+- Lightweight LLMs / mobile LLMs  
+- Any model that cannot load multiple md files
+
+> **Tip:** For the most accurate and predictable setup behavior, always run the ecosystem with **Claude Sonnet 4.5** when available.
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Copy Java Setup Folder
@@ -56,7 +82,7 @@ Copy the `java-setup/` and `tools/` folder into the root of your Java repository
 
 ```text
 your-repo/
-  java-setup/
+  docs/
     JAVA_ECOSYSTEM.md
     CONFIGURATION.md
     AI_INSTRUCTIONS.md
@@ -70,7 +96,7 @@ your-repo/
 
 ### 2. Configure Project Type & Tools
 
-Open `java-setup/CONFIGURATION.md` — this is the **single source of truth** for how the Java ecosystem behaves.  
+Open `docs/CONFIGURATION.md` — this is the **single source of truth** for how the Java ecosystem behaves.  
 All project-type, tooling, and automation flags are defined in one consolidated block.
 
 - In the **Project Type Configuration**:
@@ -87,7 +113,7 @@ All project-type, tooling, and automation flags are defined in one consolidated 
 		
 ### 3. Update Core Project Details
 
-Open **`java-setup/SETUP_STEPS.md`** and navigate to **Step 6 (CONTEXT_GUIDE.md)**.
+Open **`docs/SETUP_STEPS.md`** and navigate to **Step 6 (CONTEXT_GUIDE.md)**.
 - **Project Overview**  
   Brief description of business context, purpose, domain, and overall architecture intention.
 
@@ -99,10 +125,10 @@ Open **`java-setup/SETUP_STEPS.md`** and navigate to **Step 6 (CONTEXT_GUIDE.md)
 In Copilot Chat or Cursor, reference the main file:
 
 ```text
-@file java-setup/JAVA_ECOSYSTEM.md
-@file java-setup/CONFIGURATION.md
-@file java-setup/AI_INSTRUCTIONS.md
-@file java-setup/SETUP_STEPS.md
+@file docs/JAVA_ECOSYSTEM.md
+@file docs/CONFIGURATION.md
+@file docs/AI_INSTRUCTIONS.md
+@file docs/SETUP_STEPS.md
 
 Read the complete Java setup ecosystem:
 - JAVA_ECOSYSTEM.md
@@ -165,7 +191,7 @@ If `.java-ecosystem.config.yaml` exists → it overrides inline settings.
 
 If you need more control, create `.java-ecosystem.config.yaml` in the repository root and follow the examples in `CONFIGURATION.md`.
 
-### Advanced Configuration
+### Advanced Configuration (Optional)
 Create `.java-ecosystem.config.yaml` for:
 
 - custom Checkstyle rules
@@ -178,32 +204,6 @@ If present:
 - AI reads YAML **first**
 - CONFIGURATION.md becomes secondary
 - AI must not overwrite configs without merging  
-
----
-
-## 💬 Example AI Prompts
-
-### Basic Ecosystem Setup
-
-```text
-@java-setup/JAVA_ECOSYSTEM.md
-
-Set up a standard Java backend ecosystem for this project using the configuration in CONFIGURATION.md.
-Respect the current Java version and build tool.
-Summarize the changes first, then apply them step by step.
-```
-
-### New Java 21 Project with Maven
-
-```text
-@java-setup/JAVA_ECOSYSTEM.md
-
-Create a new Java 21 Maven service in this repository using the Java setup guide.
-
-Requirements:
-- Enable Checkstyle, Spotless, and Snyk
-- Generate CONTEXT_GUIDE.md and prompts.md
-```
 
 ---
 
@@ -265,7 +265,7 @@ chmod +x .git/hooks/pre-commit
 
 ---
 
-## 📚 Files in `java-setup/`
+## 📚 Files in `docs/`
 
 - **`README.md`** – This quick overview and how‑to.
 - **`JAVA_ECOSYSTEM.md`** – Entry point for AI and human readers.

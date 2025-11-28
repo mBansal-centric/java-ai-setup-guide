@@ -59,7 +59,6 @@ AI MUST determine the IDE using the **`ide_active`** flag from `CONFIGURATION.md
 - ❌ Do NOT create, modify, or delete IntelliJ-specific files:
   - `.idea/**`, `*.iml`, `.ipr`, `.iws`
 - ❌ Do NOT generate IntelliJ code-style or workspace configs.
-- ✔ Provide **instructions only**, not files.
 - ✔ Ensure formatting, linting, and quality checks are enforced through:
   - `.git/hooks/pre-commit`
   - `scripts/*.sh` or `scripts/*.bat`
@@ -268,7 +267,6 @@ Before moving to next step:
 - ✅ **If IDE = IntelliJ (from `ide_active` or fallback detection):**
   - Do NOT create or modify:
     - `.idea/**`, `*.iml`, `.ipr`, `.iws`
-  - Provide **instructional guidance only** (no files generated)
   - Recommend plugins (Checkstyle-IDEA, Google Java Format)
   - Enforce formatting/checks through Git hooks and CLI tools
 
@@ -482,7 +480,6 @@ Generate:
 
 2. If `ide_active: intellij`
 - **Do NOT** create `.idea/**` or `*.iml`
-- Provide **IntelliJ setup guidance only**
 - Enforce tooling through Git hooks and CLI tools, not IDE config files
 
 3. If no `ide_active` set
@@ -497,7 +494,6 @@ Fallback to detection:
 |------|--------------|
 | `.vscode/settings.json` | Only if IDE = VS Code |
 | `.vscode/extensions.json` | Only if IDE = VS Code |
-| IntelliJ guidance (not config files) | If IDE = IntelliJ |
 | `tools/*`, `scripts/*.sh/.bat` | Based on flags |
 | `.git/hooks/pre-commit` | If `auto_setup_hooks: true` |
 | Context files | If `create_context_files: true` |

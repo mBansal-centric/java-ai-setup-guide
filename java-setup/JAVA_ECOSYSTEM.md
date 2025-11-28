@@ -116,14 +116,12 @@ AI will automatically detect and load:
 A typical layout when you copy this into a repo:
 
 ```text
-java-setup/
+docs/
 ├── JAVA_ECOSYSTEM.md          # This file – overview & navigation
 ├── CONFIGURATION.md      # Project type, Java version, tools, VS Code extensions
 ├── AI_INSTRUCTIONS.md    # AI behavior rules & merging strategy
 └── SETUP_STEPS.md        # Step‑by‑step setup instructions
 ```
-
-You can place this folder anywhere in your repository (e.g., `/docs/java-setup` or `/dev-tools/java`).
 
 ---
 
@@ -143,7 +141,7 @@ This Java ecosystem setup aims to:
 
 ## 📋 How to Use – For Developers
 
-1. **Copy the folder** `java-setup/` into your repository (e.g., `/java-setup` or `/docs/java-setup`)
+1. **Copy the folder** `docs/` into your repository
 2. Open **`CONFIGURATION.md`** and:
    - Set `project_type` → `"new"`, `"existing"`, or `"auto-detect"`
    - Confirm Java 21 for new projects (`java_version_default: "21"`)
@@ -164,7 +162,7 @@ This Java ecosystem setup aims to:
 When the user includes `JAVA_ECOSYSTEM.md` in context or uses a path like:
 
 ```text
-@java-setup/JAVA_ECOSYSTEM.md
+@file docs/JAVA_ECOSYSTEM.md
 ```
 
 you MUST:
@@ -243,7 +241,7 @@ This ecosystem is focused on establishing a clean, maintainable, AI-assisted Jav
 	  - `.idea/**`  
 	  - `*.iml`  
 	  - `.iws`, `.ipr`  
-	- ✔ Provides **instructions only**, never generates IntelliJ project files  
+	- ✔ Never generates IntelliJ project files  
 	- ✔ All enforcement is through CLI + Git hooks, not IDE configs 
 
 ---

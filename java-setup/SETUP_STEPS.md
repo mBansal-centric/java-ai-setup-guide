@@ -58,7 +58,6 @@ If any of the above is unclear → **ask the user first**.
 - **If `ide_active: intellij`**  
 	- [ ] **IntelliJ IDEA installed**
 	- [ ] AI MUST NOT generate or modify `.idea/**` or `*.iml`
-	- [ ] AI MUST provide IntelliJ setup **instructions only**
 
 ---
 
@@ -149,7 +148,6 @@ When `project_type` is `"existing"` or `"auto-detect"` finds existing configs, A
 AI MUST:
 	- NEVER modify `.idea/**` or `*.iml`  
 	- NEVER auto-generate IntelliJ project files  
-	- Provide **instructions only** for IntelliJ  
 	- Respect existing workspace-level preferences
 
 **Build Files (Maven/Gradle)**
@@ -176,11 +174,10 @@ AI MUST create or merge the following base configuration files (depending on pro
 	- ❌ DO NOT create or modify:
 	  - `.idea/**`
 	  - `*.iml`
-	- ✔ Provide IntelliJ setup instructions only  
 	- ✔ Rely on Git hooks + CLI tools for quality checks 
-- `java-context/CONTEXT_GUIDE.md` (if enabled)
-- `java-context/AI_USAGE_POLICY.md` (if enabled)
-- `java-context/prompts.md` (optional)
+- `docs/guidelines/CONTEXT_GUIDE.md` (if enabled)
+- `docs/guidelines/AI_USAGE_POLICY.md` (if enabled)
+- `docs/guidelines/prompts.md` (optional)
 - `.github/workflows/ci.yml` (if auto_setup_ci: true)
 - `.git/hooks/pre-commit` (if auto_setup_hooks: true)
 - `pom.xml` or `build.gradle` (depending on build_tool_default)
@@ -531,7 +528,7 @@ AI MUST configure the IDE based strictly on the **`ide_active`** value from `CON
 	- *.iml
 	- .ipr, .iws
 - ❌ DO NOT update workspace-level settings
-- ✔ Provide instructions only, never generate IntelliJ project files
+- ✔ Never generate IntelliJ project files
 - ✔ Rely on CLI-based enforcement (Git hooks, Checkstyle, Spotless, Snyk)
 - ✔ If user explicitly requests shared project-level code style:
 	- Only modify files outside .idea/**
@@ -589,7 +586,7 @@ jobs:
 # 📘 Step 6 — Context Files
 These files help developers AND AI understand the project architecture, coding standards, and safe AI usage rules.
 AI must follow these rules when generating or updating context files:
-- Create missing files **inside the `java-context/` folder only**
+- Create missing files **inside the `docs/guidelines/` folder only**
 - When `project_type = existing`, **merge** with existing content instead of replacing it
 - **NEVER overwrite custom sections**
 - **Add** missing recommended sections if they are absent
@@ -655,11 +652,19 @@ AI must explain and structure the following main points:
 - **Pull Request Guidelines**
 
 ## `prompts.md`
-AI MUST generate real, practical, expert-level prompts.
-Each category MUST contain 5 to 12 fully written prompt examples.
 
-Expand the following categories:
+AI MUST generate real, practical, expert-level prompts that follow our project’s Java coding standards.
+AI MUST always apply the rules defined in `docs/java-context/context_guide.md` when generating any coding-related prompt.
 
+The generated `prompts.md` MUST include:
+- Clear, fully written prompt examples (NOT summaries)
+- Prompts ready to copy-paste directly into Copilot/ChatGPT/IntelliJ/VS Code
+- Prompts aligned with our architecture, naming conventions, and coding guidelines
+
+Quantity Requirements:
+- Each category MUST contain between 5 and 12 complete prompt examples.
+
+Categories to expand:
 - CRUD prompts  
 - Refactoring prompts  
 - Testing prompts  
@@ -667,9 +672,17 @@ Expand the following categories:
 - Validation prompts  
 - Migration / modernization prompts  
 
+General Rules:
+- Every example MUST instruct the AI to reference `docs/java-context/context_guide.md`
+- All prompts MUST be specific, actionable, and aligned to Spring Boot + Java best practices
+- Avoid generic or theoretical prompts — only real development tasks used in enterprise projects
+
 ---
 
 # 🧪 Step 7 — Validation
+> Note: All required binaries (Spotless, Checkstyle, Snyk) are already downloaded 
+> and available in the `tools/` and `scripts/` directories. Do NOT suggest downloading 
+> or re-installing them. Simply run the validation commands below.
 
 ## 🔍 Run All Checks
 
@@ -699,7 +712,7 @@ scripts\snyk-scan.bat
 Run a commit to ensure that your **pre-commit hook** executes all tools automatically:
 
 ```
-git add .
+git add --dry-run .
 git commit --dry-run -m "Test hook"
 ```
 
