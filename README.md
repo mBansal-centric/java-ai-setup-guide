@@ -125,7 +125,16 @@ Open **`docs/SETUP_STEPS.md`** and navigate to **Step 6 (CONTEXT_GUIDE.md)**.
 In Copilot Chat or Cursor, reference the main file:
 
 ```text
-@file docs/JAVA_ECOSYSTEM.md
+@file java-setup/JAVA_ECOSYSTEM.md
+@file java-setup/CONFIGURATION.md
+@file java-setup/AI_INSTRUCTIONS.md
+@file java-setup/SETUP_STEPS.md
+
+Read the complete Java setup ecosystem:
+- JAVA_ECOSYSTEM.md
+- CONFIGURATION.md
+- AI_INSTRUCTIONS.md
+- SETUP_STEPS.md
 
 Follow ALL rules, constraints, merging strategies, and active tool settings defined in these files.
 
