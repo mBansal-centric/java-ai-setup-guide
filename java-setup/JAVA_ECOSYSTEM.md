@@ -1,6 +1,6 @@
-# Java Developer Ecosystem Setup Guide (VS Code + AI‑Driven)
+# Java Developer Ecosystem Setup Guide (VS Code/IntelliJ + AI‑Driven)
 
-> **Purpose**: This guide helps you set up a consistent **Java backend / Spring Boot** development environment (with **VS Code** or **IntelliJ** and AI tools like Copilot / Cursor) for **new Java 21 projects** OR **existing Java projects**.  
+> **Purpose**: This guide helps you set up a consistent **Java backend / Spring Boot** development environment (with **VS Code** or **IntelliJ** and AI tools like Copilot / Cursor) for **new Java projects** OR **existing Java projects**.  
 > When you add this file to AI chat context, the assistant must read the other Java setup files and follow them step‑by‑step.
 
 ---

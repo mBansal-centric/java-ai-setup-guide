@@ -1,4 +1,4 @@
-# Java Developer Ecosystem Setup (VS Code + AI)
+# Java Developer Ecosystem Setup (VS Code/IntelliJ + AI)
 
 > **AI‑assisted setup guide** for configuring Java backend projects (new Java 21 services or existing Java apps) with VS Code, testing, static analysis, CI, and AI context files.
 
@@ -126,32 +126,8 @@ In Copilot Chat or Cursor, reference the main file:
 
 ```text
 @file docs/JAVA_ECOSYSTEM.md
-@file docs/CONFIGURATION.md
-@file docs/AI_INSTRUCTIONS.md
-@file docs/SETUP_STEPS.md
-
-Read the complete Java setup ecosystem:
-- JAVA_ECOSYSTEM.md
-- CONFIGURATION.md
-- AI_INSTRUCTIONS.md
-- SETUP_STEPS.md
 
 Follow ALL rules, constraints, merging strategies, and active tool settings defined in these files.
-
-Respect `project_type` from CONFIGURATION.md:
-- "new" → create all files from scratch
-- "existing" → read → compare → merge (never overwrite)
-- "auto-detect" → detect project state, then follow the correct path
-
-Do NOT add anything outside the ecosystem rules.
-Do NOT overwrite any existing files; always read → compare → merge.
-Do NOT install or enable tools other than the active tools defined in configuration.
-Use only the active tools (Checkstyle, Spotless CLI, Snyk, Git Hooks).
-
-If `create_context_files: true`, generate:
-- CONTEXT_GUIDE.md
-- AI_USAGE_POLICY.md
-- prompts.md
 
 Before applying any changes:
 1. Summarize exactly what you plan to do.
@@ -181,29 +157,11 @@ Open `CONFIGURATION.md` and verify:
 - Git hook automation:
   - auto_setup_hooks
 
-If `.java-ecosystem.config.yaml` exists → it overrides inline settings.
-
 ### How to Modify Configuration
 
 1. **Project type & automation** → `CONFIGURATION.md`
 2. **AI behavior rules** → `AI_INSTRUCTIONS.md`
 3. **Detailed steps & snippets** → `SETUP_STEPS.md`
-
-If you need more control, create `.java-ecosystem.config.yaml` in the repository root and follow the examples in `CONFIGURATION.md`.
-
-### Advanced Configuration (Optional)
-Create `.java-ecosystem.config.yaml` for:
-
-- custom Checkstyle rules
-- Spotless formatting rules
-- Custom snyk config  
-- CI overrides  
-- Merge behavior 
-
-If present:
-- AI reads YAML **first**
-- CONFIGURATION.md becomes secondary
-- AI must not overwrite configs without merging  
 
 ---
 

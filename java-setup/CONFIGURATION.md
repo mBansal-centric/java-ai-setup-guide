@@ -28,23 +28,9 @@ It defines:
 - Git hook automation
 - IDE-specific behaviors
 - Context file generation
-- Advanced overrides via `.java-ecosystem.config.yaml`
 
 **AI Instruction:**  
-AI must treat this file as the **source of truth** unless `.java-ecosystem.config.yaml` exists (which overrides it).
-
----
-
-## 🟢 Active Tools (Enabled in This Project)
-
-Only the following tools are used:
-
-- **Checkstyle**
-- **Spotless**
-- **Snyk**
-- **Native Git Hooks (.git/hooks)**
-
-These must be installed, configured, and enforced.
+AI must treat this file as the **source of truth**.
 
 ---
 
@@ -56,7 +42,7 @@ This setup fully supports **VS Code** and **IntelliJ IDEA**.
 ide_active: intellij # options: vscode | intellij
 ```
 
-AI Behavior:
+**Rules for AI**:
  - If vscode → modify .vscode/settings.json, extensions.json, and launch configs.
  - If intellij → modify .idea/* structure and code style configs.
  - Never overwrite existing IDE configs without merging or explicit user approval.
@@ -71,7 +57,7 @@ This controls how setup behaves for **new vs existing** Java projects.
 project_type: "auto-detect"   # Options: "new" | "existing" | "auto-detect"
 ```
 
-### Project Type Options
+**Rules for AI**:
 
 - **`"new"`**
   - Creates a **new Java project** (Maven or Gradle) from scratch
@@ -136,7 +122,6 @@ setup_mode: "auto"                    # auto | step_by_step | manual
 # Automation
 auto_setup_hooks: true                 # Enable .git/hooks generation
 create_context_files: true             # CONTEXT_GUIDE.md, AI_USAGE_POLICY.md, prompts.md
-use_custom_configs: false              # If true → use .java-ecosystem.config.yaml
 auto_setup_ci: false                   # Disable CI setup (Snyk/CodeQL unused)
 ```
 
@@ -196,100 +181,15 @@ extensions:
 
 ---
 
-## 🔧 Advanced Configuration (Optional `.java-ecosystem.config.yaml`)
-
-For more granular control, you can create a **`.java-ecosystem.config.yaml`** in repo root.
-
-```yaml
-# .java-ecosystem.config.yaml
-
-java:
-  default_version: "21"
-  respect_existing: true
-
-build_tool:
-  preferred: "maven"       # "maven" | "gradle" | "detect"
-  detect_from_files: true  # auto-detect pom.xml / build.gradle
-
-tools:
-  checkstyle:
-    enabled: true
-    config_file: "config/checkstyle/checkstyle.xml"
-
-  spotless:
-    enabled: true
-    format: "google-java-format"
-	
-  snyk_check:
-    enabled: true
-
-  git_hooks:
-    enabled: true
-    location: ".git/hooks/pre-commit"
-    run:
-      - "mvn spotless:check"
-      - "mvn checkstyle:check"
-	  - "tools/snyk/snyk test"
-
-# VS Code Extension Customization
-vscode_extensions:
-  core:
-    - id: "redhat.java"
-      enabled: true
-    - id: "vscjava.vscode-java-pack"
-      enabled: true
-
-ci:
-  enabled: false     # No Snyk/CodeQL by default
-  provider: "github_actions"
-  workflows:
-    - name: "build"
-      enabled: true
-    - name: "security-scan"
-      enabled: true
-```
-
-**Priority**:
-
-1. `.java-ecosystem.config.yaml` (if present) – Highest priority (if exists)  
-2. `CONFIGURATION.md` → Inline flags  
-3. `SETUP_STEPS.md` → Default behavior
-
----
-
 ## 📝 Git Hooks Usage (Important)
 
-Java projects must use **native Git hooks**, not Husky.
+Java projects must use **native Git hooks**.
 
 Tools enforced via `.git/hooks/pre-commit`:
 
 - Checkstyle  
 - Spotless    
 - Snyk
-
-If:
-```
-git:
-  auto_setup_hooks: true
-```
-
-AI should generate Git hook scripts automatically.
-
----
-
-## Example Configuration 
-
-```yaml
-project_type: auto-detect
-respect_existing_java_version: true
-
-enable_checkstyle: true
-enable_spotless: true
-enable_snyk: true
-
-git:
-  auto_setup_hooks: true
-```
 
 ---
 
@@ -306,30 +206,30 @@ git:
 ## 📝 Note for AI (Execution Order & Safety Rules)
 
 1. **First**: Read the `project_type` setting in `CONFIGURATION.md`.
-2. **Second**: Check if `.java-ecosystem.config.yaml` exists at project root.
-3. **If YAML config exists**:  
-   - Treat it as the **highest-priority source of truth**.  
-   - Use YAML settings to override all inline configuration.
-4. **If no YAML config exists**:  
-   - Use inline configuration from `CONFIGURATION.md`.
-5. **IDE-specific handling**:  
+2. **Second**: Use all inline configuration values from `CONFIGURATION.md`  
+   as the **single source of truth** for project setup.
+3. **IDE-specific handling**:  
    - Respect the `ide_active` value:  
      - `vscode` → Apply/modify `.vscode/settings.json` and related VS Code configs.  
-     - `intellij` → Apply/modify IntelliJ IDEA `.idea` files and project structure.  
-   - Do **not** overwrite existing IDE settings without merging or explicit user confirmation.
-6. **Always inspect existing project configs** before generating or modifying:  
+     - `intellij` → Do **not** modify `.idea/**` or IntelliJ project files; rely on CLI tools instead.  
+   - Do **not** overwrite any existing IDE settings without merging or explicit user confirmation.
+4. **Always inspect existing project configurations** before making changes:  
    - `pom.xml` / `build.gradle`  
    - `.vscode/settings.json` or `.idea/*`  
-   - `config/checkstyle` / `spotless` configurations  
+   - `config/checkstyle/*`  
+   - `tools/` (Checkstyle, Spotless, Snyk binaries)  
    - `.git/hooks/*`
-7. **For existing projects (`project_type = existing`)**:  
-   - Compare existing configs with recommended configs.  
-   - Only **add missing pieces** (never overwrite without merging).  
-   - Preserve existing Java version and build settings.
-8. **Conflict Handling**:  
-   - If user-defined config conflicts with recommended defaults:  
-     - **Stop and ask the user how to proceed**  
-     - Provide options: *overwrite*, *merge*, or *skip*.
+5. **For existing projects (`project_type = existing`)**:  
+   - Read → compare → merge (never overwrite).  
+   - Add only missing configurations.  
+   - Preserve all existing Java versions, build settings, and custom tool rules.
+6. **Conflict handling**:  
+   - If a user-defined config conflicts with a recommended default:  
+     - **Stop and ask the user how to proceed**.  
+     - Provide choices: *overwrite*, *merge*, or *skip*.
+7. **Safety rule**:  
+   - At every step, validate before writing changes.  
+   - If ambiguity is detected, AI must request user clarification.
 
 ### AI Safety Rules
 - Do **NOT** add or enable tools explicitly disabled in config  

@@ -125,8 +125,7 @@ Before completing IDE setup, AI MUST validate:
      - They are explicitly mentioned in config, or
      - The user explicitly asks for them.
    - Use configuration from:
-	 - `.java-ecosystem.config.yaml` (highest priority)
-	 - `CONFIGURATION.md` (secondary)
+	 - `CONFIGURATION.md` (highest priority)
 	 - Default instructions from `SETUP_STEPS.md`
 
 3. **NO “CLEVER” REWRITES**
@@ -220,9 +219,8 @@ Before moving to next step:
      - If unclear → ask:
        > “Which IDE do you use — IntelliJ or VS Code?”
 
-- ✅ **Always check for `.java-ecosystem.config.yaml` first**  
-  If present → it overrides all inline settings.  
-  Then read `CONFIGURATION.md`, then `SETUP_STEPS.md`.
+- ✅ **Always use `CONFIGURATION.md` as the single source of truth**  
+  Load all settings directly from `CONFIGURATION.md` and then proceed to `SETUP_STEPS.md`.
 
 - ✅ **Validate OS / shell** to determine correct script types:
   - Linux/macOS → `.sh`
@@ -324,24 +322,24 @@ Extract and understand:
 - `java_version_default`, `build_tool_default`
 - `enable_checkstyle`, `enable_spotless`, `enable_snyk`
 - `auto_setup_hooks`, `auto_setup_ci`, `create_context_files`, `use_custom_configs`
-- This file is the **single source of truth** for inline configuration unless YAML override exists.
+- This file is the **single source of truth** for inline configuration.
 
 
 2. **Second** – IDE AUTO-DETECTION (run first)
 Determine the IDE to use for subsequent actions **in this exact order**:
 
-1. **If the user explicitly states an IDE in the current chat/context → use that.**  
- (A direct user statement overrides all other sources.)
+	- **If the user explicitly states an IDE in the current chat/context → use that.**  
+	 (A direct user statement overrides all other sources.)
 
-2. **Else if `ide_active` is set in `CONFIGURATION.md` → use that.**  
- (`ide_active` is authoritative when provided.)
+	- **Else if `ide_active` is set in `CONFIGURATION.md` → use that.**  
+	 (`ide_active` is authoritative when provided.)
 
-3. **Else fall back to folder-based auto-detection:**
- - If `.idea/` exists → `detected_ide = "intellij"`
- - Else if `.vscode/` exists → `detected_ide = "vscode"`
- - If both folders exist → `detected_ide = "both"`
- - If still unclear → **ask the user**:  
-   > "Which IDE are you using — IntelliJ or VS Code?"
+	- **Else fall back to folder-based auto-detection:**
+	 - If `.idea/` exists → `detected_ide = "intellij"`
+	 - Else if `.vscode/` exists → `detected_ide = "vscode"`
+	 - If both folders exist → `detected_ide = "both"`
+	 - If still unclear → **ask the user**:  
+	   > "Which IDE are you using — IntelliJ or VS Code?"
 
 **Important:** `ide_active` **overrides** folder heuristics but **not** an explicit user statement.
 
@@ -350,21 +348,7 @@ Use `detected_ide` to gate all subsequent IDE actions:
 - If `detected_ide == "vscode"` → DO NOT create or modify `.idea/*`
 - If `detected_ide == "both"` → safely support both (never delete either)
 
-3. **Third** – Check for `.java-ecosystem.config.yaml`
-If this file exists:
-
-- Treat it as **highest-priority configuration**
-- YAML overrides inline configuration
-- Always merge (NEVER overwrite user-defined settings)
-- YAML controls:
-  - Java version  
-  - Build tool preference  
-  - Active tool configuration  
-  - VS Code extension preferences  
-  - Git hook rules  
-  - CI settings (if enabled)
-
-4. **Fourth** – Detect Project State
+3. **Third** – Detect Project State
 For `project_type = "existing"` or `auto-detect`, inspect repository contents:
 
 - Build tool files:
@@ -386,22 +370,21 @@ For `project_type = "existing"` or `auto-detect`, inspect repository contents:
 
 Use these findings to determine what already exists and what needs adding.
 
-5. **Fifth** – Determine Build Tool
-- If `pom.xml` exists → **Maven project**  
-- If `build.gradle` or `build.gradle.kts` exists → **Gradle project**  
+4. **Fourth** – Determine Build Tool
+- If `pom.xml` exists → **Maven project**
+- If `build.gradle` or `build.gradle.kts` exists → **Gradle project**
 - If neither exists **and** `project_type = "new"`:
-  - Use build tool preference defined in `.java-ecosystem.config.yaml`  
-  - If no preference found → **default to Maven**
+  - Use the `build_tool_default` value from `CONFIGURATION.md`.
+  - If `build_tool_default` is not set or is invalid → **default to Maven**
 
 ---
 
-6. **Sixth** – Build an Execution Plan
+5. **Fifth** – Build an Execution Plan
 AI must construct a step-by-step plan based on:
 
 - `project_type` (`new` | `existing` | `auto-detect`)
 - Build tool (Maven vs Gradle)
 - Enabled active tools and automation flags
-- Whether `.java-ecosystem.config.yaml` overrides inline config
 - Resolved IDE (from Step 2) and its implications for file edits:
 - If IDE = `vscode` → plan may include writing `.vscode/*` files (validate JSON)
 - If IDE = `intellij` → plan must only include guidance for IntelliJ (no generated `.idea` files)
@@ -719,9 +702,8 @@ When `enable_junit` or `enable_jacoco` is true:
 5. Respect `setup_mode` (`auto` / `step_by_step` / `manual`).
 
 **Configuration Priority:**
-1. `.java-ecosystem.config.yaml` (if exists) — highest priority.
-2. Inline configuration from `CONFIGURATION.md`.
-3. Default settings from `SETUP_STEPS.md`.
+1. Inline configuration from `CONFIGURATION.md` — highest priority.
+2. Default settings defined in `SETUP_STEPS.md`.
 
 ---
 

@@ -68,9 +68,7 @@ AI MUST follow this order strictly, without skipping or assuming anything.
 ## 1.0 Configuration Loading (AI MUST follow this order)
 
 1. Read `project_type`, `ide_active` from **CONFIGURATION.md**  
-2. Check if `.java-ecosystem.config.yaml` exists  
-   - If yes → treat YAML as the highest‑priority config  
-3. If project is `"existing"` or `"auto-detect"`, detect existing files:  
+2. If project is `"existing"` or `"auto-detect"`, detect existing files:  
    - `pom.xml` or `build.gradle`  
    - `src/main/java` and `src/test/java`  
    - `.editorconfig`  
@@ -78,18 +76,18 @@ AI MUST follow this order strictly, without skipping or assuming anything.
    - `.git/hooks/pre-commit`  
    - `.github/workflows/*.yml`  
    - `config/checkstyle/checkstyle.xml`
-4. For each file:
+3. For each file:
    - If exists → READ → MERGE → DO NOT OVERWRITE  
    - If missing → create recommended version  
-5. Respect config flags:
+4. Respect config flags:
    - enable_checkstyle  
    - enable_spotless  
    - auto_setup_hooks  
    - auto_setup_ci  
    - create_context_files  
-6. After creating/editing each file → validate  
-7. On ANY error → STOP and report  
-8. Proceed to Step 2 only after all validations succeed  
+5. After creating/editing each file → validate  
+6. On ANY error → STOP and report  
+7. Proceed to Step 2 only after all validations succeed  
 
 **Merging Strategy for Existing Configs**
 When `project_type` is `"existing"` or `"auto-detect"` finds existing configs, AI must **read → compare → merge**, never overwrite.
@@ -409,7 +407,7 @@ Else (Linux/Mac) → run .sh script
 3. **Windows does NOT require executable bits** — Git runs the hook file automatically.  
 4. On Linux/macOS → AI MUST still set the executable bit using `chmod +x`.
 
-### ✔ Updated `.git/hooks/pre-commit` (Cross-platform Safe)	
+### `.git/hooks/pre-commit` (Cross-platform Safe)	
 
 `.git/hooks/pre-commit`:
 
@@ -424,34 +422,31 @@ case "$(uname -s)" in
     ;;
 esac
 
-# --- Spotless (if enabled) ---
-if [ -f "scripts/spotless-check.sh" ] || [ -f "scripts/spotless-check.bat" ]; then
+# --- Spotless (if enabled and script exists) ---
+if [ "$IS_WINDOWS" = true ] && [ -x "scripts/spotless-check.bat" ]; then
   echo "Running Spotless..."
-  if [ "$IS_WINDOWS" = true ] && [ -f "scripts/spotless-check.bat" ]; then
-    scripts/spotless-check.bat || exit 1
-  else
-    scripts/spotless-check.sh || exit 1
-  fi
+  scripts/spotless-check.bat || exit 1
+elif [ -x "scripts/spotless-check.sh" ]; then
+  echo "Running Spotless..."
+  scripts/spotless-check.sh || exit 1
 fi
 
-# --- Checkstyle (if enabled) ---
-if [ -f "scripts/checkstyle.sh" ] || [ -f "scripts/checkstyle.bat" ]; then
+# --- Checkstyle (if enabled and script exists) ---
+if [ "$IS_WINDOWS" = true ] && [ -x "scripts/checkstyle.bat" ]; then
   echo "Running Checkstyle..."
-  if [ "$IS_WINDOWS" = true ] && [ -f "scripts/checkstyle.bat" ]; then
-    scripts/checkstyle.bat || exit 1
-  else
-    scripts/checkstyle.sh || exit 1
-  fi
+  scripts/checkstyle.bat || exit 1
+elif [ -x "scripts/checkstyle.sh" ]; then
+  echo "Running Checkstyle..."
+  scripts/checkstyle.sh || exit 1
 fi
 
-# --- Snyk Security Scan (if enabled) ---
-if [ -f "scripts/snyk-scan.sh" ] || [ -f "scripts/snyk-scan.bat" ]; then
+# --- Snyk (if enabled and script exists) ---
+if [ "$IS_WINDOWS" = true ] && [ -x "scripts/snyk-scan.bat" ]; then
   echo "Running Snyk Security Scan..."
-  if [ "$IS_WINDOWS" = true ] && [ -f "scripts/snyk-scan.bat" ]; then
-    scripts/snyk-scan.bat || exit 1
-  else
-    scripts/snyk-scan.sh || exit 1
-  fi
+  scripts/snyk-scan.bat || exit 1
+elif [ -x "scripts/snyk-scan.sh" ]; then
+  echo "Running Snyk Security Scan..."
+  scripts/snyk-scan.sh || exit 1
 fi
 
 exit 0
@@ -680,7 +675,7 @@ General Rules:
 ---
 
 # 🧪 Step 7 — Validation
-> Note: All required binaries (Spotless, Checkstyle, Snyk) are already downloaded 
+> Note: All required binaries (Spotless, Checkstyle, Snyk) **are already downloaded** 
 > and available in the `tools/` and `scripts/` directories. Do NOT suggest downloading 
 > or re-installing them. Simply run the validation commands below.
 
@@ -693,16 +688,23 @@ If on Linux/macOS, run the .sh versions.
 
 ✔ Linux / macOS
 ```
-scripts/spotless-check.sh
-java -jar tools/checkstyle/checkstyle.jar -c config/checkstyle/checkstyle.xml $(git ls-files "*.java")
-scripts/snyk-scan.sh
+# Spotless (if enabled)
+[ -x scripts/spotless-check.sh ] && scripts/spotless-check.sh
+
+# Checkstyle (if enabled)
+[ -x scripts/checkstyle.sh ] && scripts/checkstyle.sh
+
+# Snyk (if enabled)
+[ -x scripts/snyk-scan.sh ] && scripts/snyk-scan.sh
 ```
 
 ✔ Windows (PowerShell or CMD)
 ```
-scripts\spotless-check.bat
-java -jar tools\checkstyle\checkstyle.jar -c config\checkstyle\checkstyle.xml (git ls-files "*.java")
-scripts\snyk-scan.bat
+if exist scripts\spotless-check.bat scripts\spotless-check.bat
+
+if exist scripts\checkstyle.bat scripts\checkstyle.bat
+
+if exist scripts\snyk-scan.bat scripts\snyk-scan.bat
 ```
 
 (If .bat scripts do not exist, run .sh files using Git Bash.)
